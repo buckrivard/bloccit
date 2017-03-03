@@ -1,0 +1,19 @@
+.social-btn {
+	display: inherit;
+	height: auto;
+	width: auto;
+	padding: 3px 5px;
+	border-radius: 5px;
+	background-color: blue;
+	text-align: center;
+}
+
+.social-btn a {
+	color: white;
+	text-decoration: none;
+}
+
+.social-btn a:hover {
+	color: gray;
+	text-decoration: none;
+}
