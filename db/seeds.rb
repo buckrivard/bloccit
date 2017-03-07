@@ -14,6 +14,10 @@
      body: RandomData.random_paragraph
    )
  end
+
+ unique = Post.find_or_create_by(title: "Beware the difference", body: "Mind the difference between salt, smelling salt, and bath salt.")
+
+ unique.comments.find_or_create_by(body: "Uh what..?")
  
  puts "Seed finished"
  puts "#{Post.count} posts created"
