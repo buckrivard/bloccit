@@ -97,13 +97,15 @@ RSpec.describe QuestionsController, type: :controller do
     it "updates question with expected attributes" do 
       new_title = RandomData.random_sentence
       new_body = RandomData.random_paragraph
+      new_resolved = true
 
-      put :update, id: my_q.id, question: {title: new_title, body: new_body}
+      put :update, id: my_q.id, question: {title: new_title, body: new_body, resolved: new_resolved}
 
       updated_q = assigns(:question)
       expect(updated_q.id).to eq my_q.id
       expect(updated_q.title).to eq new_title
       expect(updated_q.body).to eq new_body
+      expect(updated_q.resolved).to eq new_resolved
     end
 
     it "redirects to the updated question" do
@@ -131,3 +133,8 @@ RSpec.describe QuestionsController, type: :controller do
 
 
 end
+
+
+
+
+
