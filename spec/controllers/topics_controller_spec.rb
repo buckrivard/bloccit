@@ -27,7 +27,7 @@ RSpec.describe TopicsController, type: :controller do
 			expect(response).to render_template :show
 		end
 
-		it "assigns my_topic to @topis" do
+		it "assigns my_topic to @topic" do
 			get :show, {id: my_topic.id}
 			expect(assigns(:topic)).to eq(my_topic)
 		end
