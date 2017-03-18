@@ -1,10 +1,8 @@
 class TopicsController < ApplicationController
 	before_action :require_sign_in, except: [:index, :show]
-	before_action :authorize_common, except: [:index, :show]
-	before_action :authorize_edit, only: [:edit, :update]
-	before_action :authorize_delete, only: [:delete]
-	before_action :authorize_create, only: [:new, :create]
-	
+	before_action :authorize_user, except: [:index, :show]
+	before_action :authorize_admin, only: [:new, :create, :destroy]
+
 	def index
 		@topics = Topic.all
 	end
@@ -62,34 +60,18 @@ class TopicsController < ApplicationController
 		params.require(:topic).permit(:name, :description, :public)
 	end
 
-	def permission_denied
-		flash[:alert] = "You do not have permission to do that."
-		redirect_to topics_path
-	end
-
-	def authorize_create
+	def authorize_admin
 		unless current_user.admin?
-			permission_denied
+			flash[:alert] = "You must be an admin to do that."
+			redirect_to topics_path
 		end
 	end
 
-	def authorize_edit
+	def authorize_user
 		unless current_user.admin? || current_user.moderator?
-			permission_denied
+			flash[:alert] = "You must be an admin to do that."
+			redirect_to topics_path
 		end
 	end
-
-	def authorize_delete
-		unless current_user.admin?
-			permission_denied
-		end
-	end
-
-	def authorize_common
-		unless current_user.admin? || current_user.moderator?
-			permission_denied
-		end
-	end
-
 end
 
