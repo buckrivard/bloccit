@@ -78,4 +78,20 @@ RSpec.describe Post, type: :model do
 			end
 		end
 	end
+
+	describe "after_create" do
+		before do
+			@another_post = Post.new(title: RandomData.random_sentence, body: RandomData.random_paragraph, topic: topic, user: user)
+		end
+
+		it "sends an email to users when they save a post" do
+			expect(FavoriteMailer).to receive(:new_post).with(@another_post).and_return(double(deliver_now: true))
+
+			@another_post.save
+		end
+	end
 end
+
+
+
+
