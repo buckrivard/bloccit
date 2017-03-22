@@ -4,6 +4,7 @@ include SessionsHelper
 RSpec.describe FavoritesController, type: :controller do
 	let(:my_user) { User.create!(name: "Bloccit User", email: "user@bloccit.com", password: "helloworld") }
 	let(:my_topic) { Topic.create!(name:  RandomData.random_sentence, description: RandomData.random_paragraph) }
+	let(:other_user) { User.create!(name: "Bloccit User 2", email: "user2@bloccit.com", password: "helloworld") }
 	let(:my_post) { my_topic.posts.create!(title: RandomData.random_sentence, body: RandomData.random_paragraph, user: my_user) }
 
 	context "guest user" do
@@ -25,7 +26,7 @@ RSpec.describe FavoritesController, type: :controller do
 
 	context "signed in user" do
 		before do
-			create_session(my_user)
+			create_session(other_user)
 		end
 
 		describe "POST create" do 
@@ -35,24 +36,25 @@ RSpec.describe FavoritesController, type: :controller do
 			end
 
 			it "creates a favorite for the current user and the specified post" do
-				expect(my_user.favorites.find_by_post_id(my_post.id)).to be_nil
 				post :create, { post_id: my_post.id }
-				expect(my_user.favorites.find_by_post_id(my_post.id)).not_to be_nil
+				expect(other_user.favorites.find_by(post_id: my_post.id)).not_to be_nil
 			end
 		end
 
 		describe "DELETE destroy" do
 			it "redirects to post show view" do
-				favorite = my_user.favorites.where(post: my_post).create
-				delete :destroy, { post_id: my_post.id, id: favorite.id }
+				post :create, { post_id: my_post.id }
+				favorite = other_user.favorites.find_by(post: my_post)
+				delete :destroy, { post_id: my_post.id, id: favorite.id}
 				expect(response).to redirect_to([my_topic, my_post])
 			end
 
 			it "deletes the favorite for the current post and user" do
-				favorite = my_user.favorites.where(post: my_post).create
-				expect(my_user.favorites.find_by_post_id(my_post.id)).not_to be_nil
+				post :create, { post_id: my_post.id }
+				favorite = other_user.favorites.find_by(post: my_post)
+				expect(other_user.favorites.find_by(post_id: my_post.id)).not_to be_nil
 				delete :destroy, { post_id: my_post.id, id: favorite.id }
-				expect(my_user.favorites.find_by_post_id(my_post.id)).to be_nil
+				expect(other_user.favorites.find_by(post_id: my_post.id)).to be_nil
 			end
 		end
 	end
