@@ -21,15 +21,24 @@
 
 <h2>Posts</h2>
 
-<%= has_posts(current_user) %>
+<%= render (@user.posts) || content_tag(:p, "#{@user} hasn't posted shit") %>
 
 <h2>Comments</h2>
-<%= has_comments(current_user) %>
+<%= render (@user.comments) || content_tag(:p, "#{@user} hasn't commented on anything yet") %>
 
 <h2>Favorites</h2>
-<% @user.favorites.each do |f| %>
-<%= f.post.title %>
-<%= f.post.user.name %>
-<%= image_tag f.post.user.avatar_url(48) %>
-<%#=render partial: 'post/posts', object: f.post %> 
+<% if @user.favorites.any? %>
+	<% @user.favorites.each do |f| %>
+	<div class="media favorite-posts">
+		<div class="media-left">
+			<%= image_tag(f.post.user.avatar_url(48), class: 'media-object') %>
+			<%= link_to f.post.user.name, f.post.user %>
+		</div>
+		<div class="media-body">
+			<%= render f.post %>
+		</div>
+	</div>
+	<% end %>
+<% else %>
+	<%= content_tag(:p, "User hasn't favorited on anything yet") %>
 <% end %>
